@@ -1,0 +1,16 @@
+{
+    "814966128400531496": {
+        "balance": 3138,
+        "inventario": [
+            {
+                "nombre": "RANGO 1",
+                "precio": 15,
+                "descripcion": ""
+            }
+        ]
+    },
+    "1065693617756319815": {
+        "balance": 2186,
+        "inventario": []
+    }
+}
