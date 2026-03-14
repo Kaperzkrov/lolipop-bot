@@ -272,15 +272,15 @@ async def on_message(message):
 
 @bot.event
 async def on_ready():
-    for guild in bot.guilds:
-        await bot.tree.sync(guild=guild)
-    print(f"Bot listo como {bot.user} | Sincronizado en {len(bot.guilds)} servidor(es)")
+    print(f"Bot conectado como {bot.user}")
+
+    # eliminar comandos globales antiguos
+    bot.tree.clear_commands(guild=None)
+
+    # sincronizar comandos nuevos
+    await bot.tree.sync()
+
+    print(f"Comandos sincronizados en {len(bot.guilds)} servidor(es)")
+
     if not ai_client:
         print("[AVISO] OPENAI_API_KEY no configurada. Respuestas de IA usarán fallback.")
-
-while True:
-    try:
-        bot.run(TOKEN)
-    except Exception as e:
-        print(f"[Bot crasheó] {e} — Reiniciando en 5 segundos...")
-        time.sleep(5)
