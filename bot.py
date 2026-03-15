@@ -99,52 +99,6 @@ async def balance(interaction: discord.Interaction, usuario: discord.Member = No
     embed.set_footer(text=FOOTER)
     await interaction.response.send_message(embed=embed)
 
-@bot.tree.command(name="work", description="Trabaja y gana Sweet Crystal Hearts")
-async def work(interaction: discord.Interaction):
-    espera = check_cooldown(interaction.user.id, "work", WORK_COOLDOWN)
-    if espera > 0:
-        return await interaction.response.send_message(f"⌛ Debes esperar **{round(espera, 1)}** segundos para trabajar de nuevo.", ephemeral=True)
-    data = asegurar_usuario(interaction.user.id)
-    ganancia = random.randint(200, 1200)
-    data[str(interaction.user.id)]["balance"] += ganancia
-    guardar_data(data)
-    embed = discord.Embed(title=random.choice(work_titulos), description=f"*{random.choice(work_respuestas)}*", color=discord.Color.purple())
-    embed.add_field(name="💎 Ganaste", value=f"**{ganancia}** {MONEDA}", inline=False)
-    embed.add_field(name="💰 Tesoro actual", value=f"**{data[str(interaction.user.id)]['balance']}** {MONEDA}", inline=False)
-    embed.set_thumbnail(url=interaction.user.display_avatar.url)
-    embed.set_footer(text=FOOTER)
-    await interaction.response.send_message(embed=embed)
-
-@bot.tree.command(name="apostar", description="Apuesta tus Sweet Crystal Hearts")
-@app_commands.describe(cantidad="Cantidad a apostar")
-async def apostar(interaction: discord.Interaction, cantidad: int):
-    espera = check_cooldown(interaction.user.id, "apostar", BET_COOLDOWN)
-    if espera > 0:
-        return await interaction.response.send_message(f"⌛ Debes esperar **{round(espera, 1)}** segundos para apostar de nuevo.", ephemeral=True)
-    data = asegurar_usuario(interaction.user.id)
-    bal = data[str(interaction.user.id)]["balance"]
-    if cantidad <= 0:
-        return await interaction.response.send_message("❌ La cantidad debe ser mayor a 0.", ephemeral=True)
-    if cantidad > bal:
-        return await interaction.response.send_message("❌ No tienes suficiente dinero para apostar.", ephemeral=True)
-    if random.choice([True, False]):
-        multiplicador = random.uniform(1.15, 2)
-        ganancia = int(cantidad * multiplicador)
-        data[str(interaction.user.id)]["balance"] += ganancia
-        guardar_data(data)
-        embed = discord.Embed(title=random.choice(apostar_ganar_titulos), description=f"*{random.choice(apostar_ganar_desc)}*", color=discord.Color.green())
-        embed.add_field(name="💎 Ganaste", value=f"**{ganancia}** {MONEDA}", inline=False)
-        embed.add_field(name="💰 Tesoro actual", value=f"**{data[str(interaction.user.id)]['balance']}** {MONEDA}", inline=False)
-    else:
-        data[str(interaction.user.id)]["balance"] -= cantidad
-        guardar_data(data)
-        embed = discord.Embed(title=random.choice(apostar_perder_titulos), description=f"*{random.choice(apostar_perder_desc)}*", color=discord.Color.red())
-        embed.add_field(name="💸 Perdiste", value=f"**{cantidad}** {MONEDA}", inline=False)
-        embed.add_field(name="💰 Tesoro actual", value=f"**{data[str(interaction.user.id)]['balance']}** {MONEDA}", inline=False)
-    embed.set_thumbnail(url=interaction.user.display_avatar.url)
-    embed.set_footer(text=FOOTER)
-    await interaction.response.send_message(embed=embed)
-
 @bot.tree.command(name="dar", description="[Admin] Dar dinero a un usuario")
 @app_commands.describe(usuario="Usuario que recibirá el dinero", cantidad="Cantidad a dar")
 async def dar(interaction: discord.Interaction, usuario: discord.Member, cantidad: int):
